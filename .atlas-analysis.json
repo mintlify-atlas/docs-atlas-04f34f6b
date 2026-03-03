@@ -1,0 +1,64 @@
+{
+  "projectType": "frontend",
+  "projectName": "ESBO Web",
+  "projectDescription": "Landing page for Escuela Sistémica Boliviana - a mental health clinic and educational institution platform",
+  "theme": "almond",
+  "primaryColor": "#c29b47",
+  "lightColor": "#fdfaf5",
+  "darkColor": "#0b132b",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "quickstart",
+          "installation"
+        ]
+      },
+      {
+        "group": "Development",
+        "pages": [
+          "development/project-structure",
+          "development/components",
+          "development/styling",
+          "development/customization"
+        ]
+      },
+      {
+        "group": "Deployment",
+        "pages": [
+          "deployment/vercel",
+          "deployment/build-process",
+          "deployment/environment"
+        ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "reference/dependencies",
+          "reference/scripts",
+          "reference/configuration"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "React 19 with Vite build system",
+    "Tailwind CSS styling with custom institutional colors",
+    "Responsive landing page design",
+    "Lucide React icons integration",
+    "Contact and social media sections",
+    "Floating chat widget"
+  ],
+  "publicApiSurface": [
+    "App component (main landing page)",
+    "Institutional color scheme (#c29b47, #fdfaf5, #0b132b)",
+    "Tailwind configuration with custom colors",
+    "Vite build configuration",
+    "Hero section with dual image layout",
+    "Contact section with email/phone/social links",
+    "Navigation header with logo and CTA button",
+    "Footer with FAQ and search functionality"
+  ]
+}
