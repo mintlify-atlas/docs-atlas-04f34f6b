@@ -1,0 +1,359 @@
+---
+title: Components
+description: React component architecture and structure in ESBO Web
+---
+
+## Overview
+
+ESBO Web is built as a single-page React application with all sections contained in the main `App.jsx` component. The component uses React 19 and Lucide React icons.
+
+## Component Architecture
+
+```jsx src/App.jsx
+import React from 'react';
+import logo from './assets/logo-esbo.jpg';
+import { BookOpen, Globe, Award, Info, MessageCircle, Search, Mail, Phone, Facebook, Instagram } from 'lucide-react';
+
+function App() {
+  return (
+    <div className="min-h-screen bg-institucional-claro font-sans flex flex-col relative">
+      {/* Component sections */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Main Sections
+
+The App component is divided into six main sections:
+
+<Steps>
+  <Step title="Header Navigation">
+    Top navigation bar with logo and CTA button
+  </Step>
+  <Step title="Hero Section">
+    Full-width hero with dual-image background and overlay
+  </Step>
+  <Step title="Icon Features">
+    Three-column feature showcase with Lucide icons
+  </Step>
+  <Step title="Contact Section">
+    Contact information and social media links
+  </Step>
+  <Step title="Footer">
+    Bottom bar with FAQ link and search input
+  </Step>
+  <Step title="Floating Chat Button">
+    Fixed position chat button in bottom-right corner
+  </Step>
+</Steps>
+
+## Header Component
+
+The header contains branding and a call-to-action button:
+
+```jsx src/App.jsx
+<header className="flex justify-between items-center py-4 px-4 sm:px-8 bg-white shadow-sm relative z-20">
+  <div className="flex items-center gap-2 sm:gap-3">
+    <img src={logo} alt="Logo ESBO" className="w-16 sm:w-20 h-auto" />
+    <h1 className="text-2xl sm:text-3xl font-bold text-institucional-dorado tracking-wide">
+      ESBO
+    </h1>
+  </div>
+  <button className="bg-institucional-dorado text-white px-4 sm:px-6 py-2 rounded-sm font-semibold hover:bg-[#a3823a] transition-colors shadow-sm text-xs sm:text-sm">
+    Acceso Estudiantes / Staff
+  </button>
+</header>
+```
+
+<Accordion title="Key Features">
+  - **Responsive Logo**: Scales from `w-16` on mobile to `w-20` on larger screens
+  - **Brand Typography**: Bold gold text with custom tracking
+  - **CTA Button**: Gold background with hover state (`hover:bg-[#a3823a]`)
+  - **Shadow**: Subtle `shadow-sm` for depth
+  - **Z-index**: Set to `z-20` to ensure it stays above other content
+</Accordion>
+
+## Hero Section
+
+The hero features a split-image background with overlay:
+
+```jsx src/App.jsx
+<section className="relative w-full h-[450px] flex items-center justify-center">
+  {/* Dual image background */}
+  <div className="absolute inset-0 flex w-full h-full z-0">
+    <div className="w-1/2 h-full bg-cover bg-center" 
+         style={{ backgroundImage: "url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" }}>
+    </div>
+    <div className="w-1/2 h-full bg-cover bg-center" 
+         style={{ backgroundImage: "url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" }}>
+    </div>
+  </div>
+  
+  {/* Gold overlay */}
+  <div className="absolute inset-0 bg-institucional-dorado/60 z-0"></div>
+  
+  {/* Content */}
+  <div className="relative z-10 text-center px-4 w-full max-w-4xl">
+    <h2 className="text-white text-3xl md:text-4xl font-bold tracking-widest mb-2 drop-shadow-md">
+      SINTEGRA:
+    </h2>
+    <h3 className="text-white text-4xl md:text-5xl font-serif mb-10 drop-shadow-md">
+      Salud Mental y Formación de Excelencia
+    </h3>
+    <div className="flex flex-col sm:flex-row justify-center gap-6">
+      <button className="bg-institucional-dorado text-white px-8 py-3 rounded font-bold hover:bg-[#a3823a] transition-colors shadow-lg text-lg">
+        Agenda tu Cita
+      </button>
+      <button className="bg-white text-institucional-dorado px-8 py-3 rounded font-bold hover:bg-gray-100 transition-colors shadow-lg text-lg">
+        Ver Diplomados y Cursos
+      </button>
+    </div>
+  </div>
+</section>
+```
+
+<Tabs>
+  <Tab title="Layout">
+    - **Fixed Height**: `h-[450px]` provides consistent hero size
+    - **Absolute Positioning**: Images and overlay use absolute positioning
+    - **Z-index Layers**: Background (z-0), overlay (z-0), content (z-10)
+    - **Flexbox Centering**: Content centered vertically and horizontally
+  </Tab>
+  
+  <Tab title="Background Images">
+    - **Split Design**: Two equal-width images (`w-1/2`)
+    - **Unsplash Integration**: High-quality stock photos
+    - **Cover Mode**: `bg-cover` ensures images fill their containers
+    - **Inline Styles**: Used for dynamic background images
+  </Tab>
+  
+  <Tab title="Overlay Effect">
+    - **Gold Tint**: `bg-institucional-dorado/60` (60% opacity)
+    - **Full Coverage**: `absolute inset-0` covers entire section
+    - **Enhanced Readability**: Dark overlay makes white text pop
+  </Tab>
+</Tabs>
+
+## Icon Features Section
+
+Three-column feature showcase using Lucide React icons:
+
+```jsx src/App.jsx
+<section className="bg-white py-12 px-8 shadow-sm border-t border-gray-100 z-10">
+  <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+    
+    <div className="flex flex-col items-center text-center flex-1">
+      <div className="text-institucional-dorado mb-4">
+        <BookOpen size={50} strokeWidth={1.5} />
+      </div>
+      <p className="font-bold text-gray-800 text-lg">Repositorio Académico</p>
+    </div>
+
+    <div className="hidden md:block w-px h-16 bg-gray-300"></div>
+
+    <div className="flex flex-col items-center text-center flex-1">
+      <div className="text-institucional-dorado mb-4">
+        <Globe size={50} strokeWidth={1.5} />
+      </div>
+      <p className="font-bold text-gray-800 text-lg">Convenios Internacionales</p>
+    </div>
+
+    <div className="hidden md:block w-px h-16 bg-gray-300"></div>
+
+    <div className="flex flex-col items-center text-center flex-1">
+      <div className="text-institucional-dorado mb-4">
+        <Award size={50} strokeWidth={1.5} />
+      </div>
+      <p className="font-bold text-gray-800 text-lg">Validación de Certificados</p>
+    </div>
+
+  </div>
+</section>
+```
+
+<Note>
+  Lucide icons are styled with custom `size` and `strokeWidth` props, and inherit color from the parent div's `text-institucional-dorado` class.
+</Note>
+
+### Icon Imports
+
+Icons are imported from the `lucide-react` package:
+
+```jsx src/App.jsx
+import { 
+  BookOpen,      // Academic repository icon
+  Globe,         // International agreements icon
+  Award,         // Certificate validation icon
+  Info,          // FAQ icon
+  MessageCircle, // Chat icon
+  Search,        // Search icon
+  Mail,          // Email icon
+  Phone,         // Phone icon
+  Facebook,      // Facebook icon
+  Instagram      // Instagram icon
+} from 'lucide-react';
+```
+
+## Contact Section
+
+Dark section with contact information and social media:
+
+```jsx src/App.jsx
+<section className="bg-[#0b132b] text-white py-16 px-8 z-10 flex-grow">
+  <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-center gap-16 md:gap-32">
+    
+    {/* Contact Info Column */}
+    <div className="flex flex-col gap-5">
+      <h4 className="text-[#d4af37] font-bold text-xl mb-2 tracking-wide">
+        CORREOS Y TELÉFONO
+      </h4>
+      
+      <div className="flex items-center gap-4">
+        <Mail className="text-white shrink-0" size={22} />
+        <a href="mailto:escuelasistemicadebolivia@gmail.com" 
+           className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+          escuelasistemicadebolivia@gmail.com
+        </a>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <Mail className="text-white shrink-0" size={22} />
+        <a href="mailto:esbosistemica@gmail.com" 
+           className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+          esbosistemica@gmail.com
+        </a>
+      </div>
+      
+      <div className="flex items-center gap-4 mt-2">
+        <Phone className="text-white shrink-0" size={22} />
+        <a href="tel:+59172160914" 
+           className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+          +591 72160914
+        </a>
+      </div>
+    </div>
+
+    {/* Social Media Column */}
+    <div className="flex flex-col gap-5">
+      <h4 className="text-[#d4af37] font-bold text-xl mb-2 tracking-wide">
+        REDES SOCIALES
+      </h4>
+      
+      <div className="flex items-center gap-4">
+        <Facebook className="text-white shrink-0" size={22} />
+        <a href="https://www.facebook.com/EscuelaSistemicaBoliviana/" 
+           target="_blank" rel="noopener noreferrer" 
+           className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+          Escuela Sistémica Boliviana
+        </a>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <Facebook className="text-white shrink-0" size={22} />
+        <a href="https://www.facebook.com/CLINICASISTEMICADELAFAMILIA/" 
+           target="_blank" rel="noopener noreferrer" 
+           className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+          Clínica Sistémica de la Familia
+        </a>
+      </div>
+      
+      <div className="flex items-center gap-4 mt-2">
+        <Instagram className="text-white shrink-0" size={22} />
+        <a href="https://www.instagram.com/escuela.sistemica.boliviana/" 
+           target="_blank" rel="noopener noreferrer" 
+           className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+          @escuela.sistemica.boliviana
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+```
+
+<Accordion title="Design Patterns">
+  - **Dark Background**: `bg-[#0b132b]` creates strong contrast
+  - **Two-Column Layout**: Contact info and social media side by side
+  - **Icon-Link Pattern**: Each link paired with a Lucide icon
+  - **Hover Effects**: Gold highlight on hover (`hover:text-[#d4af37]`)
+  - **Accessibility**: Proper `href` attributes and external link security
+  - **Responsive**: Stacks vertically on mobile (`flex-col md:flex-row`)
+</Accordion>
+
+## Footer Component
+
+```jsx src/App.jsx
+<footer className="bg-institucional-dorado pt-3 pb-20 sm:pb-3 px-4 sm:px-8 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 z-20 relative">
+  <button className="text-white font-medium hover:underline flex items-center gap-2 text-sm sm:text-base">
+    <Info size={18} /> Preguntas Frecuentes (FAQ Clínica)
+  </button>
+  <div className="bg-white rounded px-3 py-1 flex items-center gap-2 text-sm w-full max-w-xs sm:w-48 shadow-inner">
+    <Search size={16} className="text-gray-400" />
+    <input type="text" placeholder="Search" className="outline-none text-gray-700 w-full" />
+  </div>
+</footer>
+```
+
+<Warning>
+  The footer has extra bottom padding on mobile (`pb-20`) to prevent overlap with the floating chat button.
+</Warning>
+
+## Floating Chat Button
+
+Fixed-position button in the bottom-right corner:
+
+```jsx src/App.jsx
+<div className="fixed bottom-6 right-6 bg-[#d4af37] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:bg-yellow-500 transition-colors z-50 border-2 border-white">
+  <MessageCircle size={28} />
+</div>
+```
+
+<Tabs>
+  <Tab title="Positioning">
+    - **Fixed Position**: Stays visible while scrolling
+    - **Bottom Right**: `bottom-6 right-6` placement
+    - **Highest Z-index**: `z-50` ensures it's always on top
+  </Tab>
+  
+  <Tab title="Styling">
+    - **Circular Shape**: `w-14 h-14 rounded-full`
+    - **Gold Background**: `bg-[#d4af37]`
+    - **White Border**: `border-2 border-white` for contrast
+    - **Shadow**: `shadow-2xl` for depth and prominence
+  </Tab>
+  
+  <Tab title="Interactions">
+    - **Cursor**: `cursor-pointer` indicates clickability
+    - **Hover Effect**: Brightens to `yellow-500`
+    - **Transition**: Smooth color change
+  </Tab>
+</Tabs>
+
+## Component Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Responsive Design" icon="mobile">
+    All components use Tailwind's responsive prefixes (`sm:`, `md:`) for mobile-first design
+  </Card>
+  
+  <Card title="Semantic HTML" icon="code">
+    Proper use of `<header>`, `<section>`, and `<footer>` elements
+  </Card>
+  
+  <Card title="Accessibility" icon="universal-access">
+    Alt text on images, proper link attributes, semantic button elements
+  </Card>
+  
+  <Card title="Performance" icon="bolt">
+    Minimal JavaScript, CSS-based interactions, optimized asset loading
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Card title="Customization Guide" icon="wrench" href="/development/customization">
+  Learn how to modify and customize these components
+</Card>

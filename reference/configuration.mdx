@@ -1,0 +1,453 @@
+---
+title: Configuration
+description: Complete reference for all configuration files in ESBO Web
+---
+
+# Configuration
+
+ESBO Web uses several configuration files to customize the build process, styling, and code quality tools.
+
+## Vite Configuration
+
+**File:** `vite.config.js`
+
+Vite is the build tool and development server for ESBO Web.
+
+```javascript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+### Configuration Options
+
+#### Plugins
+
+- **`@vitejs/plugin-react`** - Enables React Fast Refresh and JSX transformation
+  - Automatically transforms JSX to JavaScript
+  - Provides instant feedback during development
+  - Preserves component state during edits
+
+### Common Customizations
+
+<AccordionGroup>
+  <Accordion title="Change server port">
+    ```javascript
+    export default defineConfig({
+      plugins: [react()],
+      server: {
+        port: 3000
+      }
+    })
+    ```
+  </Accordion>
+
+  <Accordion title="Configure base path for deployment">
+    ```javascript
+    export default defineConfig({
+      plugins: [react()],
+      base: '/my-app/'
+    })
+    ```
+  </Accordion>
+
+  <Accordion title="Add path aliases">
+    ```javascript
+    import path from 'path'
+    
+    export default defineConfig({
+      plugins: [react()],
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, './src'),
+          '@components': path.resolve(__dirname, './src/components')
+        }
+      }
+    })
+    ```
+  </Accordion>
+
+  <Accordion title="Environment variables">
+    ```javascript
+    export default defineConfig({
+      plugins: [react()],
+      define: {
+        __APP_VERSION__: JSON.stringify('1.0.0')
+      }
+    })
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  See the [Vite documentation](https://vitejs.dev/config/) for all available configuration options.
+</Tip>
+
+---
+
+## Tailwind Configuration
+
+**File:** `tailwind.config.js`
+
+Tailwind CSS is configured with custom brand colors for ESBO.
+
+```javascript
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        'institucional-dorado': '#c29b47', 
+        'institucional-claro': '#fdfaf5',
+      }
+    },
+  },
+  plugins: [],
+}
+```
+
+### Configuration Options
+
+#### Content
+
+Defines which files Tailwind should scan for class names:
+- `./index.html` - Main HTML entry point
+- `./src/**/*.{js,ts,jsx,tsx}` - All JavaScript/TypeScript/JSX/TSX files in src
+
+<Note>
+  Tailwind removes unused styles from production builds by scanning these files.
+</Note>
+
+#### Custom Colors
+
+Two institutional brand colors are defined:
+
+| Color Name | Hex Value | Usage |
+|------------|-----------|-------|
+| `institucional-dorado` | #c29b47 | Primary brand gold color |
+| `institucional-claro` | #fdfaf5 | Light background/accent color |
+
+**Usage in components:**
+
+```jsx
+<div className="bg-institucional-claro text-institucional-dorado">
+  Brand colored content
+</div>
+```
+
+#### Plugins
+
+Currently no Tailwind plugins are installed. Common plugins to consider:
+- `@tailwindcss/forms` - Better form styling
+- `@tailwindcss/typography` - Prose content styling
+- `@tailwindcss/aspect-ratio` - Aspect ratio utilities
+
+### Extending the Configuration
+
+<AccordionGroup>
+  <Accordion title="Add more custom colors">
+    ```javascript
+    theme: {
+      extend: {
+        colors: {
+          'institucional-dorado': '#c29b47',
+          'institucional-claro': '#fdfaf5',
+          'institucional-azul': '#1e40af',
+        }
+      },
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Add custom fonts">
+    ```javascript
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          heading: ['Poppins', 'sans-serif'],
+        }
+      },
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Custom breakpoints">
+    ```javascript
+    theme: {
+      extend: {
+        screens: {
+          'xs': '475px',
+          '3xl': '1920px',
+        }
+      },
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## ESLint Configuration
+
+**File:** `eslint.config.js`
+
+ESLint enforces code quality and consistency.
+
+```javascript
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+])
+```
+
+### Configuration Breakdown
+
+#### Global Ignores
+
+```javascript
+globalIgnores(['dist'])
+```
+
+Excludes the `dist/` directory from linting (build output).
+
+#### File Patterns
+
+```javascript
+files: ['**/*.{js,jsx}']
+```
+
+Lints all JavaScript and JSX files in the project.
+
+#### Extended Configurations
+
+1. **`js.configs.recommended`** - Core ESLint rules for JavaScript
+2. **`reactHooks.configs.flat.recommended`** - Rules for React Hooks:
+   - Ensures Hooks are called in the correct order
+   - Validates dependencies in useEffect, useMemo, etc.
+   - Prevents Hooks in conditionals or loops
+
+3. **`reactRefresh.configs.vite`** - Rules for Fast Refresh:
+   - Ensures components export properly
+   - Validates Hot Module Replacement compatibility
+
+#### Language Options
+
+- **`ecmaVersion: 2020`** - Enables modern JavaScript features
+- **`globals.browser`** - Recognizes browser globals (window, document, etc.)
+- **`jsx: true`** - Enables JSX parsing
+- **`sourceType: 'module'`** - Uses ES modules (import/export)
+
+#### Custom Rules
+
+```javascript
+'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }]
+```
+
+- Throws error on unused variables
+- Ignores variables starting with uppercase letter or underscore
+- Useful for imported React components or constants
+
+### Adding Custom Rules
+
+<AccordionGroup>
+  <Accordion title="Enforce consistent return">
+    ```javascript
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'consistent-return': 'error'
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Warn on console statements">
+    ```javascript
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-console': 'warn'
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Enforce PropTypes">
+    First install the plugin:
+    ```bash
+    npm install --save-dev eslint-plugin-react
+    ```
+    
+    Then add to config:
+    ```javascript
+    import react from 'eslint-plugin-react'
+    
+    // In your config:
+    plugins: {
+      react
+    },
+    rules: {
+      'react/prop-types': 'error'
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## PostCSS Configuration
+
+**File:** `postcss.config.js`
+
+PostCSS processes CSS with plugins before it's bundled.
+
+```javascript
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+### Plugins
+
+#### Tailwind CSS Plugin
+
+Processes Tailwind directives and generates utility classes:
+- Transforms `@tailwind` directives
+- Generates utility classes based on configuration
+- Removes unused styles in production
+
+#### Autoprefixer
+
+Automatically adds vendor prefixes for browser compatibility:
+- Targets browsers based on browserslist configuration
+- Adds `-webkit-`, `-moz-`, `-ms-` prefixes as needed
+- Removes outdated prefixes
+
+**Example:**
+
+```css
+/* Input */
+.example {
+  display: flex;
+  user-select: none;
+}
+
+/* Output */
+.example {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+```
+
+### Browser Targets
+
+By default, Autoprefixer uses browserslist defaults. Customize in `package.json`:
+
+```json
+{
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
+```
+
+### Adding More Plugins
+
+<AccordionGroup>
+  <Accordion title="CSS Nesting">
+    ```bash
+    npm install --save-dev postcss-nesting
+    ```
+    
+    ```javascript
+    export default {
+      plugins: {
+        'postcss-nesting': {},
+        tailwindcss: {},
+        autoprefixer: {},
+      },
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="CSS Minification">
+    ```bash
+    npm install --save-dev cssnano
+    ```
+    
+    ```javascript
+    export default {
+      plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+        ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
+      },
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Configuration Best Practices
+
+<Card title="Keep it simple" icon="sparkles">
+  Start with minimal configuration and add complexity only when needed.
+</Card>
+
+<Card title="Document changes" icon="book">
+  Add comments explaining why custom configurations were added.
+</Card>
+
+<Card title="Version control" icon="git-alt">
+  Commit all configuration files to track changes over time.
+</Card>
+
+<Card title="Team alignment" icon="users">
+  Ensure all developers use the same configuration for consistency.
+</Card>
+
+## Related Resources
+
+- [Vite Configuration Reference](https://vitejs.dev/config/)
+- [Tailwind Configuration](https://tailwindcss.com/docs/configuration)
+- [ESLint Configuration](https://eslint.org/docs/latest/use/configure/)
+- [PostCSS Documentation](https://postcss.org/)

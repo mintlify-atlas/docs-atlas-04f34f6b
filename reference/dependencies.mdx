@@ -1,0 +1,136 @@
+---
+title: Dependencies
+description: Complete reference of all project dependencies and their purposes
+---
+
+# Dependencies
+
+ESBO Web uses a minimal set of modern dependencies to keep the bundle size small and maintainable.
+
+## Production Dependencies
+
+These dependencies are included in the production build and shipped to end users.
+
+| Package | Version | Purpose |
+|---------|---------|----------|
+| `react` | ^19.2.0 | Core React library for building the UI |
+| `react-dom` | ^19.2.0 | React DOM renderer for web applications |
+| `lucide-react` | ^0.575.0 | Icon library providing beautiful, consistent SVG icons |
+
+### React 19
+
+ESBO Web uses React 19, the latest major version which includes:
+- Improved performance and rendering optimizations
+- Enhanced server components support
+- Better TypeScript integration
+- Modern concurrent features
+
+### Lucide React
+
+Lucide provides over 1,000 carefully designed icons used throughout the landing page:
+- Lightweight and tree-shakeable
+- Consistent design system
+- Easy to customize (size, color, stroke width)
+- Fully accessible
+
+## Development Dependencies
+
+These dependencies are only used during development and building.
+
+### Build Tools
+
+| Package | Version | Purpose |
+|---------|---------|----------|
+| `vite` | ^7.3.1 | Fast build tool and dev server |
+| `@vitejs/plugin-react` | ^5.1.1 | Vite plugin for React support with Fast Refresh |
+
+### Styling
+
+| Package | Version | Purpose |
+|---------|---------|----------|
+| `tailwindcss` | ^3.4.19 | Utility-first CSS framework |
+| `autoprefixer` | ^10.4.27 | PostCSS plugin to add vendor prefixes automatically |
+| `postcss` | ^8.5.6 | Tool for transforming CSS with JavaScript plugins |
+
+### Code Quality
+
+| Package | Version | Purpose |
+|---------|---------|----------|
+| `eslint` | ^9.39.1 | JavaScript and JSX linting |
+| `@eslint/js` | ^9.39.1 | ESLint JavaScript configuration |
+| `eslint-plugin-react-hooks` | ^7.0.1 | Enforces React Hooks rules |
+| `eslint-plugin-react-refresh` | ^0.4.24 | Validates Fast Refresh constraints |
+| `globals` | ^16.5.0 | Global identifiers from different JavaScript environments |
+
+### Type Definitions
+
+| Package | Version | Purpose |
+|---------|---------|----------|
+| `@types/react` | ^19.2.7 | TypeScript type definitions for React |
+| `@types/react-dom` | ^19.2.3 | TypeScript type definitions for React DOM |
+
+## Update Strategy
+
+<Note>
+  All dependencies use caret (`^`) versioning, which allows automatic patch and minor version updates.
+</Note>
+
+### Checking for Updates
+
+```bash
+npm outdated
+```
+
+### Updating Dependencies
+
+```bash
+# Update all dependencies to their latest compatible versions
+npm update
+
+# Update a specific dependency
+npm update <package-name>
+
+# Check for major version updates
+npx npm-check-updates
+```
+
+## Security Considerations
+
+<Warning>
+  Regularly audit dependencies for security vulnerabilities.
+</Warning>
+
+### Security Audit
+
+```bash
+# Run npm security audit
+npm audit
+
+# Fix vulnerabilities automatically
+npm audit fix
+```
+
+### Best Practices
+
+- Keep dependencies up to date with patch releases
+- Review release notes before major version upgrades
+- Test thoroughly after updating dependencies
+- Monitor security advisories for critical updates
+- Use `npm ci` in production for reproducible builds
+
+## Adding New Dependencies
+
+When adding new dependencies, consider:
+
+1. **Bundle size impact** - Check the package size using [Bundlephobia](https://bundlephobia.com/)
+2. **Maintenance status** - Ensure the package is actively maintained
+3. **License compatibility** - Verify the license is compatible with your project
+4. **Alternatives** - Evaluate if existing dependencies can solve the problem
+
+```bash
+# Add a production dependency
+npm install <package-name>
+
+# Add a development dependency
+npm install --save-dev <package-name>
+```

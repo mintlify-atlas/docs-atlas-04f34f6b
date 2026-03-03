@@ -1,0 +1,456 @@
+---
+title: 'Environment Configuration'
+description: 'Configure Node.js, environment variables, and deployment settings for ESBO Web'
+---
+
+## Overview
+
+Proper environment configuration ensures ESBO Web runs consistently across development, staging, and production environments. This guide covers Node.js requirements, environment variables, and configuration for different deployment targets.
+
+## Node.js Requirements
+
+### Version Compatibility
+
+ESBO Web requires:
+
+- **Node.js**: 18.0.0 or higher (recommended: 18.x LTS or 20.x LTS)
+- **npm**: 9.0.0 or higher (comes with Node.js)
+
+<Info>
+  Vite 7.3.1 requires Node.js 18+ for optimal performance and ES module support.
+</Info>
+
+### Checking Your Version
+
+Verify your current Node.js version:
+
+```bash
+node --version
+npm --version
+```
+
+### Installing Node.js
+
+<Steps>
+  <Step title="Using NVM (Recommended)">
+    Node Version Manager allows easy switching between Node.js versions:
+    
+    ```bash
+    # Install NVM
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    
+    # Install Node.js 20 LTS
+    nvm install 20
+    nvm use 20
+    
+    # Set as default
+    nvm alias default 20
+    ```
+  </Step>
+
+  <Step title="Direct Installation">
+    Download from [nodejs.org](https://nodejs.org/):
+    
+    - Choose LTS (Long Term Support) version
+    - Follow installer instructions
+    - Verify installation with `node --version`
+  </Step>
+
+  <Step title="Using Package Managers">
+    **macOS (Homebrew):**
+    ```bash
+    brew install node@20
+    ```
+    
+    **Ubuntu/Debian:**
+    ```bash
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+    ```
+    
+    **Windows (Chocolatey):**
+    ```bash
+    choco install nodejs-lts
+    ```
+  </Step>
+</Steps>
+
+## Environment Variables
+
+### Vite Environment Variables
+
+Vite exposes environment variables to your client-side code using the `VITE_` prefix.
+
+<Note>
+  Currently, ESBO Web doesn't require environment variables for basic functionality. However, you may need them for API integrations or feature flags.
+</Note>
+
+### Creating Environment Files
+
+Create environment files in your project root:
+
+```bash
+# .env.local (local development, git-ignored)
+VITE_API_URL=http://localhost:3000
+VITE_ENABLE_ANALYTICS=false
+
+# .env.production (production builds)
+VITE_API_URL=https://api.esbo.example.com
+VITE_ENABLE_ANALYTICS=true
+```
+
+### Environment File Priority
+
+Vite loads environment files in this order (later files override earlier ones):
+
+1. `.env` - Loaded in all cases
+2. `.env.local` - Loaded in all cases, ignored by git
+3. `.env.[mode]` - Loaded only in specified mode
+4. `.env.[mode].local` - Loaded only in specified mode, ignored by git
+
+<Warning>
+  Never commit `.env.local` or any files containing secrets to version control. Add them to `.gitignore`.
+</Warning>
+
+### Using Environment Variables
+
+Access environment variables in your code:
+
+```javascript
+// In any .jsx/.js file
+const apiUrl = import.meta.env.VITE_API_URL
+const isProduction = import.meta.env.PROD
+const isDevelopment = import.meta.env.DEV
+
+console.log('API URL:', apiUrl)
+console.log('Mode:', import.meta.env.MODE)
+```
+
+### Built-in Variables
+
+Vite provides these variables automatically:
+
+- `import.meta.env.MODE`: `'development'` or `'production'`
+- `import.meta.env.PROD`: `true` in production
+- `import.meta.env.DEV`: `true` in development
+- `import.meta.env.BASE_URL`: Base URL of the app
+
+## Development vs Production
+
+### Development Environment
+
+**Start development server:**
+
+```bash
+npm run dev
+```
+
+**Characteristics:**
+
+- Runs on `http://localhost:5173`
+- Hot Module Replacement (HMR) enabled
+- Verbose error messages
+- Source maps included
+- No optimization or minification
+- Fast rebuild times
+
+**Environment:**
+
+```javascript
+import.meta.env.MODE === 'development'
+import.meta.env.DEV === true
+```
+
+### Production Environment
+
+**Build for production:**
+
+```bash
+npm run build
+```
+
+**Characteristics:**
+
+- Optimized and minified bundles
+- Tree-shaking applied
+- Asset hashing for cache busting
+- No development warnings
+- Optimized for performance
+
+**Environment:**
+
+```javascript
+import.meta.env.MODE === 'production'
+import.meta.env.PROD === true
+```
+
+### Preview Production Locally
+
+Test production build on local machine:
+
+```bash
+npm run build
+npm run preview
+```
+
+<Info>
+  The preview server runs on `http://localhost:4173` by default and serves the built `dist/` directory.
+</Info>
+
+## Deployment Target Configuration
+
+### Vercel
+
+**Automatic configuration** (detected by Vercel):
+
+- Framework: Vite
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Node.js Version: 18.x (default)
+
+**Environment variables in Vercel:**
+
+1. Go to Project Settings → Environment Variables
+2. Add variables with `VITE_` prefix
+3. Select environments: Production, Preview, Development
+4. Redeploy to apply changes
+
+<Note>
+  Vercel automatically makes environment variables available during build time.
+</Note>
+
+### Netlify
+
+**Build settings:**
+
+```toml netlify.toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+```
+
+**Environment variables:**
+
+- Add in Site Settings → Environment Variables
+- Use `VITE_` prefix for client-side variables
+
+### GitHub Pages
+
+**Configure base path** in `vite.config.js`:
+
+```javascript vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  base: '/repository-name/',
+  plugins: [react()],
+})
+```
+
+**GitHub Actions workflow:**
+
+```yaml .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+```
+
+### Docker
+
+**Multi-stage Dockerfile:**
+
+```dockerfile Dockerfile
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM nginx:alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+**nginx.conf:**
+
+```nginx nginx.conf
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Cache static assets
+    location ~* \.(?:css|js|jpg|jpeg|gif|png|svg|ico|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+```
+
+## Configuration Best Practices
+
+### Security
+
+<Warning>
+  Never expose secrets in client-side code. Environment variables prefixed with `VITE_` are embedded in the client bundle and visible to users.
+</Warning>
+
+**Safe for client-side:**
+
+```bash
+VITE_API_URL=https://api.example.com
+VITE_APP_VERSION=1.0.0
+VITE_ENABLE_FEATURE_X=true
+```
+
+**Never in client-side:**
+
+```bash
+# These should NEVER have VITE_ prefix
+DATABASE_URL=...
+API_SECRET_KEY=...
+PRIVATE_KEY=...
+```
+
+### Git Ignore Configuration
+
+Ensure your `.gitignore` includes:
+
+```text .gitignore
+# Environment files
+.env.local
+.env.*.local
+
+# Build output
+dist
+dist-ssr
+*.local
+
+# Dependencies
+node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+```
+
+### Type Safety for Environment Variables
+
+Create type definitions for environment variables:
+
+```typescript vite-env.d.ts
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string
+  readonly VITE_ENABLE_ANALYTICS: string
+  // Add more variables as needed
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+```
+
+## Troubleshooting
+
+### Environment Variables Not Loading
+
+<Steps>
+  <Step title="Check prefix">
+    Ensure variables start with `VITE_`
+  </Step>
+
+  <Step title="Restart dev server">
+    Environment changes require server restart:
+    
+    ```bash
+    # Stop dev server (Ctrl+C)
+    npm run dev
+    ```
+  </Step>
+
+  <Step title="Verify file location">
+    Environment files must be in project root (same directory as `package.json`)
+  </Step>
+
+  <Step title="Check file naming">
+    Files must be named exactly: `.env`, `.env.local`, `.env.production`, etc.
+  </Step>
+</Steps>
+
+### Node.js Version Mismatch
+
+If you encounter version issues:
+
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Remove node_modules and lock file
+rm -rf node_modules package-lock.json
+
+# Reinstall with correct Node.js version
+npm install
+```
+
+### Build Fails in CI/CD
+
+<Info>
+  Most CI/CD issues are caused by missing environment variables or incorrect Node.js versions.
+</Info>
+
+**Checklist:**
+
+1. Verify Node.js version in CI configuration
+2. Ensure all required environment variables are set
+3. Check that build command matches `package.json`
+4. Verify dependencies are installed correctly
+5. Review build logs for specific errors
+
+## Next Steps
+
+- Set up environment-specific configurations
+- Configure deployment pipelines
+- Add monitoring and analytics
+- Implement feature flags
+- Set up automated testing across environments

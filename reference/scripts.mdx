@@ -1,0 +1,256 @@
+---
+title: Scripts
+description: npm scripts available in the project for development, building, and testing
+---
+
+# Scripts
+
+ESBO Web includes several npm scripts for common development tasks. All scripts are defined in `package.json`.
+
+## Available Scripts
+
+### `dev`
+
+Starts the development server with hot module replacement (HMR).
+
+```bash
+npm run dev
+```
+
+**What it does:**
+- Launches Vite development server
+- Enables Fast Refresh for React components
+- Serves the application at `http://localhost:5173`
+- Watches for file changes and updates instantly
+- Provides detailed error messages in the browser
+
+**When to use:**
+- During active development
+- When testing changes locally
+- For rapid prototyping
+
+**Options:**
+
+You can customize the dev server behavior:
+
+```bash
+# Run on a different port
+npm run dev -- --port 3000
+
+# Open browser automatically
+npm run dev -- --open
+
+# Run on all network interfaces
+npm run dev -- --host
+```
+
+<Note>
+  The development build is not optimized and includes debugging tools. Always use `build` for production.
+</Note>
+
+---
+
+### `build`
+
+Creates an optimized production build.
+
+```bash
+npm run build
+```
+
+**What it does:**
+- Compiles and bundles all source files
+- Minifies JavaScript and CSS
+- Optimizes assets (images, fonts, etc.)
+- Generates source maps for debugging
+- Outputs to the `dist/` directory
+- Tree-shakes unused code
+- Splits code into optimized chunks
+
+**When to use:**
+- Before deploying to production
+- To test production build performance
+- For bundle size analysis
+
+**Build output:**
+
+The build process creates:
+- `dist/index.html` - Entry HTML file
+- `dist/assets/` - Optimized JavaScript, CSS, and static assets
+- Hashed filenames for cache busting
+
+<Tip>
+  Always run `build` before deploying to ensure there are no production-specific errors.
+</Tip>
+
+---
+
+### `lint`
+
+Runs ESLint to check code quality and identify issues.
+
+```bash
+npm run lint
+```
+
+**What it does:**
+- Analyzes JavaScript and JSX files
+- Checks for syntax errors
+- Enforces code style rules
+- Validates React Hooks usage
+- Ensures Fast Refresh compatibility
+- Reports unused variables and imports
+
+**When to use:**
+- Before committing code
+- As part of CI/CD pipeline
+- When debugging unexpected behavior
+- Before code reviews
+
+**Fixing issues automatically:**
+
+Some linting issues can be auto-fixed:
+
+```bash
+npm run lint -- --fix
+```
+
+**Custom configurations:**
+
+```bash
+# Lint specific files
+npm run lint -- src/components/Header.jsx
+
+# Show warnings as well as errors
+npm run lint -- --max-warnings 0
+```
+
+<Warning>
+  Fix all linting errors before pushing code to avoid CI/CD failures.
+</Warning>
+
+---
+
+### `preview`
+
+Serves the production build locally for testing.
+
+```bash
+npm run preview
+```
+
+**What it does:**
+- Serves the built files from `dist/`
+- Runs a local static file server
+- Mimics production environment
+- Available at `http://localhost:4173`
+
+**When to use:**
+- After running `build`
+- To test production build locally
+- To verify optimizations work correctly
+- Before deploying to production
+
+**Options:**
+
+```bash
+# Run on a different port
+npm run preview -- --port 8080
+
+# Open browser automatically
+npm run preview -- --open
+```
+
+<Note>
+  You must run `npm run build` before using `preview`. The preview command does not build the project.
+</Note>
+
+---
+
+## Script Workflow
+
+Typical development workflow:
+
+```bash
+# 1. Start development
+npm run dev
+
+# 2. Make changes and test
+# (Files auto-reload with HMR)
+
+# 3. Check code quality
+npm run lint
+
+# 4. Build for production
+npm run build
+
+# 5. Preview production build
+npm run preview
+
+# 6. Deploy dist/ folder
+```
+
+## Common Script Combinations
+
+### Pre-commit Check
+
+```bash
+npm run lint && npm run build
+```
+
+Ensures code passes linting and builds successfully.
+
+### Full Build and Preview
+
+```bash
+npm run build && npm run preview
+```
+
+Builds the project and immediately serves it for testing.
+
+## CI/CD Integration
+
+Example GitHub Actions workflow:
+
+```yaml
+- name: Install dependencies
+  run: npm ci
+
+- name: Lint code
+  run: npm run lint
+
+- name: Build project
+  run: npm run build
+```
+
+## Troubleshooting
+
+### Port Already in Use
+
+If the default port is taken:
+
+```bash
+npm run dev -- --port 3000
+```
+
+### Build Errors
+
+1. Clear node_modules and reinstall:
+   ```bash
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+2. Check for TypeScript/ESLint errors first:
+   ```bash
+   npm run lint
+   ```
+
+### Cache Issues
+
+Clear Vite cache:
+
+```bash
+rm -rf node_modules/.vite
+npm run dev
+```

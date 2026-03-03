@@ -1,0 +1,228 @@
+---
+title: Project Structure
+description: Understanding the ESBO Web codebase organization and architecture
+---
+
+## Overview
+
+ESBO Web follows a standard Vite + React project structure with a single-page application architecture. The codebase is organized for simplicity and maintainability.
+
+## Directory Tree
+
+```
+esbo-web/
+├── public/              # Static assets served directly
+│   └── vite.svg        # Vite logo
+├── src/                # Application source code
+│   ├── assets/         # Images and media files
+│   │   ├── logo-esbo.jpg
+│   │   └── react.svg
+│   ├── App.jsx         # Main application component
+│   ├── App.css         # Component-specific styles (legacy)
+│   ├── main.jsx        # Application entry point
+│   └── index.css       # Tailwind CSS directives
+├── index.html          # HTML entry point
+├── package.json        # Dependencies and scripts
+├── vite.config.js      # Vite configuration
+├── tailwind.config.js  # Tailwind CSS configuration
+├── postcss.config.js   # PostCSS configuration
+├── eslint.config.js    # ESLint configuration
+└── README.md           # Project documentation
+```
+
+## Key Directories
+
+<AccordionGroup>
+  <Accordion title="src/ - Source Code">
+    Contains all React components and application logic:
+    - **App.jsx**: The main single-page component with all sections
+    - **main.jsx**: React application initialization and mounting
+    - **assets/**: Images, logos, and static media files
+    - **index.css**: Global Tailwind CSS imports
+  </Accordion>
+
+  <Accordion title="public/ - Static Assets">
+    Files served directly without processing by Vite:
+    - **vite.svg**: Default Vite logo (can be replaced with favicon)
+    - Assets here are accessible via root URL path
+  </Accordion>
+
+  <Accordion title="Configuration Files">
+    Root-level configuration for build tools and code quality:
+    - **vite.config.js**: Build and development server settings
+    - **tailwind.config.js**: Custom theme colors and extensions
+    - **postcss.config.js**: CSS processing pipeline
+    - **eslint.config.js**: Code linting rules
+  </Accordion>
+</AccordionGroup>
+
+## Entry Points
+
+### HTML Entry Point
+
+The `index.html` file is the application's entry point:
+
+```html index.html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>esbo-web</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+```
+
+<Note>
+  The `#root` div is where React mounts the entire application.
+</Note>
+
+### React Entry Point
+
+The `main.jsx` file initializes React:
+
+```jsx src/main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+```
+
+## Build Configuration
+
+### Vite Configuration
+
+```javascript vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+Vite provides:
+- Lightning-fast hot module replacement (HMR)
+- Optimized production builds
+- Native ES modules support
+- React Fast Refresh for instant updates
+
+### Tailwind Configuration
+
+```javascript tailwind.config.js
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        'institucional-dorado': '#c29b47',
+        'institucional-claro': '#fdfaf5',
+      }
+    },
+  },
+  plugins: [],
+}
+```
+
+<Tip>
+  The `content` array tells Tailwind which files to scan for class names. This enables tree-shaking to remove unused styles in production.
+</Tip>
+
+### PostCSS Configuration
+
+```javascript postcss.config.js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+## Package Dependencies
+
+<Tabs>
+  <Tab title="Runtime Dependencies">
+    ```json package.json
+    "dependencies": {
+      "lucide-react": "^0.575.0",
+      "react": "^19.2.0",
+      "react-dom": "^19.2.0"
+    }
+    ```
+    - **react**: Core React library (latest v19)
+    - **react-dom**: DOM rendering for React
+    - **lucide-react**: Beautiful open-source icon library
+  </Tab>
+
+  <Tab title="Development Dependencies">
+    ```json package.json
+    "devDependencies": {
+      "@vitejs/plugin-react": "^5.1.1",
+      "autoprefixer": "^10.4.27",
+      "eslint": "^9.39.1",
+      "postcss": "^8.5.6",
+      "tailwindcss": "^3.4.19",
+      "vite": "^7.3.1"
+    }
+    ```
+    - **vite**: Build tool and development server
+    - **tailwindcss**: Utility-first CSS framework
+    - **eslint**: Code quality and linting
+    - **autoprefixer**: Automatic vendor prefixes
+  </Tab>
+
+  <Tab title="Scripts">
+    ```json package.json
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "lint": "eslint .",
+      "preview": "vite preview"
+    }
+    ```
+    - `npm run dev`: Start development server
+    - `npm run build`: Build for production
+    - `npm run lint`: Check code quality
+    - `npm run preview`: Preview production build
+  </Tab>
+</Tabs>
+
+## Architecture Pattern
+
+ESBO Web uses a **Single-Page Application (SPA)** pattern:
+
+- All content is contained in one `App.jsx` component
+- No routing library (single page with sections)
+- Component-based structure within a single file
+- Tailwind CSS for utility-first styling
+- Lucide React for iconography
+
+<Warning>
+  This architecture is ideal for landing pages but may need refactoring (component splitting, routing) if the site grows significantly.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Components" icon="puzzle-piece" href="/development/components">
+    Explore the React component structure
+  </Card>
+  <Card title="Styling" icon="palette" href="/development/styling">
+    Learn about the Tailwind CSS setup
+  </Card>
+</CardGroup>

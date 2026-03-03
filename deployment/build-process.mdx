@@ -1,0 +1,352 @@
+---
+title: 'Build Process'
+description: 'Understanding how Vite builds ESBO Web for production deployment'
+---
+
+## Overview
+
+ESBO Web uses Vite as its build tool, providing fast builds, optimized bundles, and modern JavaScript features. This guide explains the complete build process from source to production-ready assets.
+
+## Build Command
+
+The build process is triggered with:
+
+```bash
+npm run build
+```
+
+This executes the `vite build` command defined in `package.json`:
+
+```json package.json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+```
+
+## Vite Configuration
+
+The build process is configured in `vite.config.js`:
+
+```javascript vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+<Info>
+  ESBO Web uses a minimal Vite configuration, relying on sensible defaults for optimal performance.
+</Info>
+
+## Build Process Steps
+
+<Steps>
+  <Step title="Dependency Resolution">
+    Vite analyzes `index.html` as the entry point and traces all module dependencies:
+    
+    - JavaScript/JSX files in `src/`
+    - CSS files (including Tailwind)
+    - Static assets in `public/`
+    - External packages from `node_modules`
+  </Step>
+
+  <Step title="Code Transformation">
+    The build pipeline applies transformations:
+    
+    **React (via @vitejs/plugin-react)**
+    - Transpiles JSX to JavaScript
+    - Applies React Fast Refresh in development
+    - Optimizes React component rendering
+    
+    **JavaScript/TypeScript**
+    - Transpiles modern JavaScript to browser-compatible code
+    - Removes development-only code
+    - Applies tree-shaking to remove unused exports
+    
+    **CSS Processing**
+    - Processes Tailwind CSS with PostCSS
+    - Applies Autoprefixer for browser compatibility
+    - Minifies CSS output
+  </Step>
+
+  <Step title="Bundle Optimization">
+    Vite optimizes the output:
+    
+    - Code splitting for better caching
+    - Minification (JavaScript and CSS)
+    - Asset hashing for cache busting
+    - Compression-friendly output
+  </Step>
+
+  <Step title="Asset Generation">
+    Final assets are written to the `dist/` directory:
+    
+    - `index.html` (entry point)
+    - `assets/*.js` (JavaScript bundles)
+    - `assets/*.css` (stylesheets)
+    - Static files from `public/`
+  </Step>
+</Steps>
+
+## Output Directory Structure
+
+After running `npm run build`, the `dist/` directory contains:
+
+```text
+dist/
+├── index.html                    # Entry point with hashed asset references
+├── assets/
+│   ├── index-[hash].js          # Main application bundle
+│   ├── index-[hash].css         # Compiled styles
+│   └── vendor-[hash].js         # Third-party dependencies (if code-split)
+└── vite.svg                      # Static assets from public/
+```
+
+<Note>
+  The `[hash]` in filenames is a content-based hash that changes only when the file content changes, enabling efficient long-term caching.
+</Note>
+
+## CSS Processing Pipeline
+
+Tailwind CSS is processed through PostCSS:
+
+```javascript postcss.config.js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+<Steps>
+  <Step title="Tailwind Processing">
+    Tailwind scans configured files for class names:
+    
+    ```javascript tailwind.config.js
+    export default {
+      content: [
+        "./index.html",
+        "./src/**/*.{js,ts,jsx,tsx}",
+      ],
+      // ...
+    }
+    ```
+    
+    Only used utility classes are included in the final CSS bundle.
+  </Step>
+
+  <Step title="Autoprefixer">
+    Automatically adds vendor prefixes for browser compatibility:
+    
+    ```css
+    /* Input */
+    .element {
+      user-select: none;
+    }
+    
+    /* Output */
+    .element {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+    ```
+  </Step>
+
+  <Step title="Minification">
+    CSS is minified and optimized:
+    
+    - Removes whitespace and comments
+    - Shortens color values
+    - Combines duplicate selectors
+    - Optimizes declarations
+  </Step>
+</Steps>
+
+## Production vs Development Builds
+
+### Development Mode (`npm run dev`)
+
+- No bundling required
+- Hot Module Replacement (HMR)
+- Source maps enabled
+- Fast cold start
+- Verbose error messages
+
+```bash
+npm run dev
+# Starts dev server at http://localhost:5173
+```
+
+### Production Build (`npm run build`)
+
+- Full bundling and optimization
+- Minified output
+- Tree-shaking applied
+- Asset hashing
+- Optimized for performance
+
+<Warning>
+  Always test production builds locally before deploying. Development mode doesn't apply the same optimizations.
+</Warning>
+
+### Preview Production Build
+
+Test the production build locally:
+
+```bash
+npm run build
+npm run preview
+```
+
+This serves the `dist/` directory, simulating production conditions.
+
+## Build Optimization Features
+
+### Code Splitting
+
+Vite automatically splits code:
+
+- Main application code
+- Vendor dependencies (React, React DOM, Lucide)
+- Dynamic imports (if used)
+
+### Tree Shaking
+
+Unused exports are eliminated:
+
+```javascript
+// Only 'X' icon is imported and bundled
+import { X } from 'lucide-react'
+// Other lucide icons are not included in the bundle
+```
+
+### Asset Optimization
+
+- **Images**: Copied to `dist/` with optional optimization
+- **Fonts**: Inlined or copied based on size
+- **SVGs**: Can be imported as components or URLs
+
+### Bundle Analysis
+
+To analyze your bundle size, add the rollup visualizer:
+
+```bash
+npm install --save-dev rollup-plugin-visualizer
+```
+
+```javascript vite.config.js
+import { visualizer } from 'rollup-plugin-visualizer'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    visualizer({ open: true })
+  ],
+})
+```
+
+## Build Troubleshooting
+
+### Build Fails
+
+**Check for errors:**
+
+```bash
+npm run build 2>&1 | tee build.log
+```
+
+**Common issues:**
+
+1. **Dependency errors**: Run `npm install` to ensure all dependencies are installed
+2. **TypeScript errors**: Fix type errors or adjust `tsconfig.json`
+3. **ESLint errors**: Run `npm run lint` to identify issues
+4. **Memory issues**: Increase Node.js memory: `NODE_OPTIONS=--max-old-space-size=4096 npm run build`
+
+### Slow Build Times
+
+<Info>
+  Vite is typically very fast, but large projects may benefit from optimization.
+</Info>
+
+**Optimization strategies:**
+
+- Reduce unnecessary dependencies
+- Use dynamic imports for large libraries
+- Enable caching in CI/CD pipelines
+- Update to latest Vite version
+
+### CSS Not Loading
+
+If styles are missing in production:
+
+1. Verify Tailwind content paths in `tailwind.config.js`
+2. Check that CSS imports are present in `src/main.jsx`
+3. Ensure PostCSS is processing correctly
+4. Clear build cache: `rm -rf dist node_modules/.vite`
+
+### Import Errors
+
+<Warning>
+  Vite uses ES modules. Ensure all imports use ES module syntax, not CommonJS.
+</Warning>
+
+```javascript
+// Correct (ES modules)
+import React from 'react'
+
+// Incorrect (CommonJS)
+const React = require('react')
+```
+
+## Performance Metrics
+
+Typical build metrics for ESBO Web:
+
+- **Build time**: 5-15 seconds
+- **Bundle size**: ~150-200 KB (gzipped)
+- **Largest chunk**: React + React DOM (~130 KB)
+- **CSS size**: ~10-20 KB (gzipped)
+
+<Note>
+  Actual sizes depend on the features and dependencies used in your application.
+</Note>
+
+## CI/CD Integration
+
+For automated builds in CI/CD:
+
+```yaml .github/workflows/build.yml
+name: Build
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+```
+
+## Next Steps
+
+- Deploy to Vercel or other hosting platforms
+- Configure environment variables for different environments
+- Set up automated testing before builds
+- Monitor bundle size over time

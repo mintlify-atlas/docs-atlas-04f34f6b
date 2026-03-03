@@ -1,0 +1,432 @@
+---
+title: Styling
+description: Tailwind CSS configuration and styling patterns in ESBO Web
+---
+
+## Overview
+
+ESBO Web uses Tailwind CSS for styling, with custom brand colors and a utility-first approach. The project uses Tailwind v3.4 with PostCSS for processing.
+
+## Tailwind Configuration
+
+The `tailwind.config.js` file defines custom brand colors:
+
+```javascript tailwind.config.js
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // colores personalizados para la marca institucional
+        'institucional-dorado': '#c29b47', 
+        // color blanco para el fondo de la marca institucional
+        'institucional-claro': '#fdfaf5',
+      }
+    },
+  },
+  plugins: [],
+}
+```
+
+<Note>
+  The `content` array tells Tailwind which files to scan for class names. This enables automatic purging of unused styles in production builds.
+</Note>
+
+## Brand Colors
+
+<Tabs>
+  <Tab title="Primary Colors">
+    ### Institucional Dorado
+    
+    **Color**: `#c29b47` (Gold)
+    
+    **Usage**:
+    - Primary brand color
+    - Buttons and CTAs
+    - Headers and important text
+    - Icon colors
+    - Hover states
+    
+    **Tailwind Class**: `bg-institucional-dorado` or `text-institucional-dorado`
+    
+    ```jsx
+    <div className="bg-institucional-dorado text-white">
+      Primary button
+    </div>
+    ```
+  </Tab>
+  
+  <Tab title="Background Colors">
+    ### Institucional Claro
+    
+    **Color**: `#fdfaf5` (Light cream)
+    
+    **Usage**:
+    - Main page background
+    - Provides warmth while maintaining readability
+    - Soft contrast with white sections
+    
+    **Tailwind Class**: `bg-institucional-claro`
+    
+    ```jsx
+    <div className="min-h-screen bg-institucional-claro">
+      Page content
+    </div>
+    ```
+  </Tab>
+  
+  <Tab title="Additional Colors">
+    ### Dark Navy
+    
+    **Color**: `#0b132b` (Dark blue)
+    
+    **Usage**:
+    - Contact section background
+    - Creates strong contrast
+    - Professional dark theme
+    
+    **Applied via**: `bg-[#0b132b]` (arbitrary value)
+    
+    ### Accent Gold
+    
+    **Color**: `#d4af37` (Brighter gold)
+    
+    **Usage**:
+    - Floating chat button
+    - Section headings in dark areas
+    - Alternative gold for variation
+    
+    **Applied via**: `bg-[#d4af37]` or `text-[#d4af37]`
+  </Tab>
+</Tabs>
+
+## CSS Files
+
+### index.css - Tailwind Directives
+
+The main CSS file imports Tailwind's layers:
+
+```css src/index.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+<Accordion title="What do these directives do?">
+  - **@tailwind base**: Injects Tailwind's base styles (CSS reset, default styles)
+  - **@tailwind components**: Injects component classes (if any custom components are defined)
+  - **@tailwind utilities**: Injects all of Tailwind's utility classes
+</Accordion>
+
+### App.css - Legacy Styles
+
+The `App.css` file contains legacy styles from the Vite template:
+
+```css src/App.css
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+```
+
+<Warning>
+  These styles are not actively used in the current ESBO Web implementation and can be removed. The app uses Tailwind utilities exclusively.
+</Warning>
+
+## PostCSS Configuration
+
+```javascript postcss.config.js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+**Plugins**:
+- **tailwindcss**: Processes Tailwind directives and generates CSS
+- **autoprefixer**: Adds vendor prefixes for cross-browser compatibility
+
+## Common Styling Patterns
+
+### Responsive Design
+
+ESBO Web uses Tailwind's responsive prefixes for mobile-first design:
+
+```jsx
+{/* Mobile: 2xl, Desktop: 3xl */}
+<h1 className="text-2xl sm:text-3xl font-bold">
+  ESBO
+</h1>
+
+{/* Mobile: 4px padding, Desktop: 8px padding */}
+<header className="py-4 px-4 sm:px-8">
+  ...
+</header>
+
+{/* Mobile: column, Desktop: row */}
+<div className="flex flex-col sm:flex-row gap-6">
+  ...
+</div>
+```
+
+<Tabs>
+  <Tab title="Breakpoints">
+    Tailwind's default breakpoints:
+    
+    | Prefix | Min Width | Description |
+    |--------|-----------|-------------|
+    | (none) | 0px | Mobile (default) |
+    | `sm:` | 640px | Small tablets |
+    | `md:` | 768px | Tablets |
+    | `lg:` | 1024px | Laptops |
+    | `xl:` | 1280px | Desktops |
+    | `2xl:` | 1536px | Large screens |
+  </Tab>
+  
+  <Tab title="Usage Example">
+    ```jsx src/App.jsx
+    <button className="
+      px-4 sm:px-6           {/* Smaller padding on mobile */}
+      py-2                   {/* Consistent vertical padding */}
+      text-xs sm:text-sm     {/* Smaller text on mobile */}
+      bg-institucional-dorado
+      text-white
+      rounded-sm
+    ">
+      Acceso Estudiantes / Staff
+    </button>
+    ```
+  </Tab>
+</Tabs>
+
+### Layout Patterns
+
+<AccordionGroup>
+  <Accordion title="Flexbox Centering">
+    ```jsx
+    <div className="flex items-center justify-center">
+      {/* Centered content */}
+    </div>
+    ```
+    Used extensively in the hero section and icon features.
+  </Accordion>
+  
+  <Accordion title="Full-Height Layouts">
+    ```jsx
+    <div className="min-h-screen flex flex-col">
+      <header>...</header>
+      <main className="flex-grow">...</main>
+      <footer>...</footer>
+    </div>
+    ```
+    The main container uses `min-h-screen` and `flex-grow` to ensure footer stays at bottom.
+  </Accordion>
+  
+  <Accordion title="Absolute Positioning">
+    ```jsx
+    <section className="relative">
+      <div className="absolute inset-0">
+        {/* Background layer */}
+      </div>
+      <div className="relative z-10">
+        {/* Content layer */}
+      </div>
+    </section>
+    ```
+    Used in the hero section for layered backgrounds and overlays.
+  </Accordion>
+  
+  <Accordion title="Fixed Positioning">
+    ```jsx
+    <div className="fixed bottom-6 right-6 z-50">
+      {/* Floating chat button */}
+    </div>
+    ```
+    Creates elements that stay visible while scrolling.
+  </Accordion>
+</AccordionGroup>
+
+### Typography Patterns
+
+```jsx src/App.jsx
+{/* Page title - large, bold, gold */}
+<h1 className="text-2xl sm:text-3xl font-bold text-institucional-dorado tracking-wide">
+  ESBO
+</h1>
+
+{/* Hero heading - extra large, white, with shadow */}
+<h2 className="text-white text-3xl md:text-4xl font-bold tracking-widest mb-2 drop-shadow-md">
+  SINTEGRA:
+</h2>
+
+{/* Hero subheading - serif font for elegance */}
+<h3 className="text-white text-4xl md:text-5xl font-serif mb-10 drop-shadow-md">
+  Salud Mental y Formación de Excelencia
+</h3>
+
+{/* Section heading - dark backgrounds */}
+<h4 className="text-[#d4af37] font-bold text-xl mb-2 tracking-wide">
+  CORREOS Y TELÉFONO
+</h4>
+```
+
+<Note>
+  Notice the use of `tracking-wide` and `tracking-widest` for letter spacing, and `drop-shadow-md` for text readability over images.
+</Note>
+
+### Color and Shadow Patterns
+
+<CodeGroup>
+```jsx Buttons - Primary
+<button className="
+  bg-institucional-dorado
+  text-white
+  hover:bg-[#a3823a]      /* Darker gold on hover */
+  transition-colors
+  shadow-lg
+  px-8 py-3
+  rounded
+  font-bold
+">
+  Agenda tu Cita
+</button>
+```
+
+```jsx Buttons - Secondary
+<button className="
+  bg-white
+  text-institucional-dorado
+  hover:bg-gray-100
+  transition-colors
+  shadow-lg
+  px-8 py-3
+  rounded
+  font-bold
+">
+  Ver Diplomados y Cursos
+</button>
+```
+
+```jsx Overlays
+<div className="absolute inset-0 bg-institucional-dorado/60 z-0">
+  {/* 60% opacity gold overlay */}
+</div>
+```
+
+```jsx Cards and Sections
+<section className="bg-white shadow-sm border-t border-gray-100">
+  {/* Subtle elevation with shadow and border */}
+</section>
+```
+</CodeGroup>
+
+### Spacing Patterns
+
+Consistent spacing scale used throughout:
+
+```jsx src/App.jsx
+{/* Sections */}
+py-12    /* Vertical section padding */
+py-16    /* Larger section padding */
+px-8     /* Horizontal section padding */
+
+{/* Components */}
+gap-2    /* Small gaps between items */
+gap-4    /* Medium gaps */
+gap-6    /* Larger gaps for buttons */
+gap-8    /* Section element spacing */
+
+{/* Text */}
+mb-2     /* Small margin below */
+mb-4     /* Icon margin */
+mb-10    /* Large margin for hero text */
+```
+
+## Hover and Transition Effects
+
+Smooth interactions throughout the site:
+
+```jsx
+{/* Button hover with color transition */}
+<button className="hover:bg-[#a3823a] transition-colors">
+
+{/* Link hover with underline */}
+<button className="hover:underline">
+
+{/* Link hover with color change */}
+<a className="hover:text-[#d4af37] transition-colors">
+
+{/* Chat button hover */}
+<div className="hover:bg-yellow-500 transition-colors cursor-pointer">
+```
+
+<Tip>
+  All interactive elements use `transition-colors` for smooth state changes. This creates a polished, professional feel.
+</Tip>
+
+## Z-Index Strategy
+
+Layering system for overlapping elements:
+
+```jsx
+z-0   /* Background layers (images, overlays) */
+z-10  /* Main content sections */
+z-20  /* Header and footer */
+z-50  /* Floating chat button (always on top) */
+```
+
+## Responsive Images
+
+```jsx src/App.jsx
+{/* Responsive logo */}
+<img 
+  src={logo} 
+  alt="Logo ESBO" 
+  className="w-16 sm:w-20 h-auto" 
+/>
+
+{/* Background images with cover */}
+<div className="w-1/2 h-full bg-cover bg-center" 
+     style={{ backgroundImage: "url(...)" }}>
+</div>
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Mobile-First" icon="mobile">
+    Base styles target mobile, then use `sm:`, `md:` prefixes for larger screens
+  </Card>
+  
+  <Card title="Utility-First" icon="wrench">
+    Use Tailwind utilities directly in JSX instead of writing custom CSS
+  </Card>
+  
+  <Card title="Consistent Spacing" icon="ruler">
+    Stick to Tailwind's spacing scale (4px increments) for visual harmony
+  </Card>
+  
+  <Card title="Custom Colors" icon="palette">
+    Brand colors defined in `tailwind.config.js` for easy maintenance
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Card title="Customization Guide" icon="paintbrush" href="/development/customization">
+  Learn how to customize colors, typography, and more
+</Card>

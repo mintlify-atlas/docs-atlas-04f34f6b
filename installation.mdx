@@ -1,0 +1,342 @@
+---
+title: Installation
+description: Complete setup guide for ESBO Web development environment with prerequisites, detailed steps, and troubleshooting
+---
+
+# Installation
+
+This guide provides comprehensive instructions for setting up ESBO Web on your local development environment, including prerequisites, detailed installation steps, and common troubleshooting solutions.
+
+## Prerequisites
+
+Before installing ESBO Web, ensure your system meets the following requirements:
+
+### Node.js and npm
+
+ESBO Web requires Node.js version 18.x or higher. The project uses modern JavaScript features and React 19, which require an up-to-date Node.js installation.
+
+<CodeGroup>
+  ```bash macOS (Homebrew)
+  brew install node
+  ```
+
+  ```bash Windows (Node.js installer)
+  # Download from https://nodejs.org/
+  # Install the LTS version (18.x or higher)
+  ```
+
+  ```bash Linux (Ubuntu/Debian)
+  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  ```
+</CodeGroup>
+
+<Info>
+  Verify your Node.js installation by running `node --version` and `npm --version` in your terminal. You should see version numbers like `v18.x.x` or higher.
+</Info>
+
+### Git
+
+You'll need Git to clone the repository:
+
+<CodeGroup>
+  ```bash macOS
+  brew install git
+  ```
+
+  ```bash Windows
+  # Download from https://git-scm.com/download/win
+  ```
+
+  ```bash Linux
+  sudo apt-get install git
+  ```
+</CodeGroup>
+
+### Code Editor
+
+We recommend using Visual Studio Code with the following extensions:
+- ESLint
+- Tailwind CSS IntelliSense
+- ES7+ React/Redux/React-Native snippets
+
+## Detailed Installation
+
+<Steps>
+  <Step title="Clone the repository">
+    Open your terminal and clone the ESBO Web repository:
+
+    ```bash
+    git clone https://github.com/SiroCarv/esbo-web.git
+    ```
+
+    Navigate into the project directory:
+
+    ```bash
+    cd esbo-web
+    ```
+
+    <Tip>
+      If you plan to contribute or make significant changes, consider forking the repository first and cloning your fork instead.
+    </Tip>
+  </Step>
+
+  <Step title="Verify project structure">
+    Ensure the project structure looks correct:
+
+    ```bash
+    ls -la
+    ```
+
+    You should see key files including:
+    - `package.json` - Project dependencies and scripts
+    - `vite.config.js` - Vite configuration
+    - `tailwind.config.js` - Tailwind CSS configuration
+    - `src/` - Source code directory
+    - `public/` - Static assets
+  </Step>
+
+  <Step title="Install dependencies">
+    Install all required packages. Choose your preferred package manager:
+
+    <CodeGroup>
+      ```bash npm
+      npm install
+      ```
+
+      ```bash yarn
+      yarn install
+      ```
+
+      ```bash pnpm
+      pnpm install
+      ```
+    </CodeGroup>
+
+    This installs the following key dependencies:
+
+    **Core Dependencies:**
+    - `react@19.2.0` - UI library
+    - `react-dom@19.2.0` - React DOM rendering
+    - `lucide-react@0.575.0` - Icon library
+
+    **Development Dependencies:**
+    - `vite@7.3.1` - Build tool and dev server
+    - `@vitejs/plugin-react@5.1.1` - React plugin for Vite
+    - `tailwindcss@3.4.19` - Utility-first CSS framework
+    - `autoprefixer@10.4.27` - PostCSS plugin for vendor prefixes
+    - `eslint@9.39.1` - Code linting
+
+    <Note>
+      The installation may take 1-2 minutes depending on your internet connection and system performance.
+    </Note>
+  </Step>
+
+  <Step title="Verify the installation">
+    Check that all dependencies were installed correctly:
+
+    ```bash
+    npm list --depth=0
+    ```
+
+    This command shows all top-level packages. Verify that key packages like `react`, `vite`, and `tailwindcss` are listed.
+  </Step>
+
+  <Step title="Start the development server">
+    Launch the Vite development server:
+
+    <CodeGroup>
+      ```bash npm
+      npm run dev
+      ```
+
+      ```bash yarn
+      yarn dev
+      ```
+
+      ```bash pnpm
+      pnpm dev
+      ```
+    </CodeGroup>
+
+    You should see output indicating the server is running:
+
+    ```bash
+    VITE v7.3.1  ready in 324 ms
+
+    ➜  Local:   http://localhost:5173/
+    ➜  Network: use --host to expose
+    ```
+  </Step>
+
+  <Step title="Verify in browser">
+    Open your browser and navigate to `http://localhost:5173/`
+
+    You should see the ESBO landing page with:
+    - Gold and white color scheme
+    - ESBO logo and header
+    - Hero section with dual images
+    - Service icons
+    - Contact information
+    - Floating chat button
+
+    <Info>
+      If the page loads successfully with all styling and images, your installation is complete!
+    </Info>
+  </Step>
+</Steps>
+
+## Project Configuration
+
+ESBO Web includes several configuration files that are already set up:
+
+### Vite Configuration
+
+The `vite.config.js` file configures the development server and build process:
+
+```javascript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+### Tailwind Configuration
+
+The `tailwind.config.js` file includes custom brand colors:
+
+```javascript
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        'institucional-dorado': '#c29b47',
+        'institucional-claro': '#fdfaf5',
+      }
+    },
+  },
+  plugins: [],
+}
+```
+
+<Tip>
+  These custom colors (`institucional-dorado` and `institucional-claro`) are used throughout the codebase. You can reference them in your JSX using Tailwind classes like `bg-institucional-dorado` or `text-institucional-claro`.
+</Tip>
+
+## Troubleshooting
+
+### Port Already in Use
+
+If you see an error that port 5173 is already in use:
+
+```bash
+Error: Port 5173 is already in use
+```
+
+**Solution:** Either stop the other process using that port or specify a different port:
+
+```bash
+npm run dev -- --port 3000
+```
+
+### Module Not Found Errors
+
+If you encounter "Module not found" errors:
+
+```bash
+Error: Cannot find module 'react'
+```
+
+**Solution:** Delete `node_modules` and reinstall:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Tailwind Styles Not Loading
+
+If the page loads but has no styling:
+
+**Solution:** Ensure your `src/index.css` file includes Tailwind directives:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Then restart the dev server.
+
+### ESLint Errors
+
+If you see linting errors:
+
+```bash
+npm run lint
+```
+
+**Solution:** Review the errors and fix them, or temporarily disable specific rules in your code:
+
+```javascript
+// eslint-disable-next-line react/prop-types
+```
+
+### Images Not Loading
+
+If the ESBO logo or hero images don't load:
+
+**Solution:** 
+1. Check that image files exist in `src/assets/`
+2. Verify import paths in `App.jsx`
+3. For Unsplash images, ensure you have an internet connection
+
+### Hot Module Replacement Not Working
+
+If changes don't reflect automatically:
+
+**Solution:**
+1. Check the terminal for errors
+2. Restart the dev server
+3. Clear browser cache (Cmd/Ctrl + Shift + R)
+4. Update your Vite version: `npm install vite@latest`
+
+<Warning>
+  If you continue experiencing issues, check the [GitHub issues](https://github.com/SiroCarv/esbo-web/issues) page or create a new issue with details about your environment and the error messages you're seeing.
+</Warning>
+
+## Verification Checklist
+
+Before proceeding to development, verify that:
+
+- [ ] Node.js version is 18.x or higher (`node --version`)
+- [ ] npm is installed (`npm --version`)
+- [ ] All dependencies installed without errors
+- [ ] Development server starts successfully
+- [ ] Page loads at `http://localhost:5173/`
+- [ ] All images and icons display correctly
+- [ ] Tailwind styles are applied (gold header, styled buttons)
+- [ ] Hot module replacement works (make a small change and see it update)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Learn the essential commands and workflows
+  </Card>
+  <Card title="Project Structure" icon="code" href="/development/project-structure">
+    Understand the technologies powering ESBO Web
+  </Card>
+  <Card title="Customization Guide" icon="book" href="/development/customization">
+    Start building features and customizing components
+  </Card>
+  <Card title="Deployment" icon="globe" href="/deployment/vercel">
+    Deploy your local changes to production
+  </Card>
+</CardGroup>

@@ -1,0 +1,196 @@
+---
+title: 'Deploying to Vercel'
+description: 'Complete guide to deploying ESBO Web to Vercel with continuous deployment from GitHub'
+---
+
+## Overview
+
+ESBO Web is optimized for deployment on Vercel, providing seamless integration with GitHub for automatic deployments. The live application is currently hosted at [esbo-web.vercel.app](https://esbo-web.vercel.app/).
+
+## Prerequisites
+
+Before deploying, ensure you have:
+
+- A GitHub account with your repository
+- A Vercel account (sign up at [vercel.com](https://vercel.com))
+- Repository access and permissions
+
+## Deployment Steps
+
+<Steps>
+  <Step title="Connect GitHub Repository">
+    1. Log in to your Vercel dashboard
+    2. Click "Add New..." and select "Project"
+    3. Import your ESBO Web repository from GitHub
+    4. Authorize Vercel to access your repository if prompted
+  </Step>
+
+  <Step title="Configure Build Settings">
+    Vercel should auto-detect Vite, but verify these settings:
+    
+    - **Framework Preset**: `Vite`
+    - **Build Command**: `npm run build`
+    - **Output Directory**: `dist`
+    - **Install Command**: `npm install`
+    
+    <Note>
+      Vercel automatically detects Vite projects and applies the correct configuration. You typically don't need to manually adjust these settings.
+    </Note>
+  </Step>
+
+  <Step title="Configure Environment Variables (Optional)">
+    If your project uses environment variables, add them in the "Environment Variables" section:
+    
+    - Click "Add" for each variable
+    - Use the `VITE_` prefix for client-side variables
+    - Set appropriate values for Production, Preview, and Development environments
+    
+    <Info>
+      Currently, ESBO Web doesn't require environment variables for basic deployment.
+    </Info>
+  </Step>
+
+  <Step title="Deploy">
+    Click "Deploy" to start your first deployment. Vercel will:
+    
+    1. Clone your repository
+    2. Install dependencies with `npm install`
+    3. Run `npm run build` to create the production bundle
+    4. Deploy the `dist` directory to their global CDN
+    
+    Your deployment typically completes in 30-60 seconds.
+  </Step>
+</Steps>
+
+## Continuous Deployment
+
+Once connected, Vercel automatically deploys:
+
+- **Production**: Every push to your `main` or `master` branch
+- **Preview**: Every push to other branches and pull requests
+
+<Note>
+  Preview deployments are perfect for testing changes before merging to production. Each preview gets a unique URL.
+</Note>
+
+## Custom Domain Setup
+
+<Steps>
+  <Step title="Add Domain">
+    1. Go to your project settings in Vercel
+    2. Navigate to the "Domains" tab
+    3. Click "Add" and enter your custom domain
+  </Step>
+
+  <Step title="Configure DNS">
+    Add the following DNS records at your domain registrar:
+    
+    ```text
+    Type: A
+    Name: @
+    Value: 76.76.21.21
+    ```
+    
+    Or for CNAME:
+    
+    ```text
+    Type: CNAME
+    Name: www
+    Value: cname.vercel-dns.com
+    ```
+  </Step>
+
+  <Step title="Verify and Enable SSL">
+    Vercel automatically provisions SSL certificates via Let's Encrypt. This usually takes a few minutes after DNS propagation.
+  </Step>
+</Steps>
+
+## Build Configuration
+
+The project uses Vite 7.3.1 with the following configuration:
+
+```javascript vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+## Deployment Best Practices
+
+### Performance Optimization
+
+- Vercel's CDN automatically caches static assets
+- Assets are served from the edge location closest to users
+- Automatic compression (Brotli/Gzip) is enabled by default
+
+### Branch Protection
+
+<Warning>
+  Consider enabling branch protection rules on your main branch to prevent accidental direct pushes. Always deploy through pull requests for production changes.
+</Warning>
+
+### Preview Deployments
+
+Use preview deployments to:
+
+- Test changes before production
+- Share work-in-progress with stakeholders
+- Run visual regression tests
+- Validate build output
+
+### Monitoring Deployments
+
+Vercel provides:
+
+- Real-time build logs
+- Deployment status in GitHub pull requests
+- Analytics for Core Web Vitals
+- Error tracking integration
+
+## Troubleshooting
+
+### Build Failures
+
+If your build fails:
+
+1. Check the build logs in Vercel dashboard
+2. Verify dependencies in `package.json`
+3. Ensure Node.js version compatibility (Vercel uses Node 18+ by default)
+4. Test the build locally: `npm run build`
+
+### Deployment Issues
+
+<Info>
+  Most issues are related to dependency versions or environment configuration. Always test builds locally before pushing.
+</Info>
+
+Common solutions:
+
+- Clear Vercel build cache: Settings → General → Clear Cache
+- Verify `dist` directory is not in `.gitignore`
+- Check for TypeScript or ESLint errors
+- Ensure all dependencies are in `dependencies` or `devDependencies`
+
+## Rollback Strategy
+
+Vercel maintains deployment history:
+
+1. Go to your project dashboard
+2. Navigate to "Deployments" tab
+3. Find a previous successful deployment
+4. Click "..." menu and select "Promote to Production"
+
+<Note>
+  Rollbacks are instant and don't require rebuilding.
+</Note>
+
+## Next Steps
+
+- Set up custom domains
+- Configure deployment protection
+- Enable Web Analytics
+- Integrate with monitoring services
+- Set up deployment notifications

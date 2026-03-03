@@ -1,0 +1,635 @@
+---
+title: Customization
+description: Step-by-step guide to customizing ESBO Web for your needs
+---
+
+## Overview
+
+This guide will walk you through common customization tasks for ESBO Web, from changing brand colors to adding new sections and features.
+
+## Changing Brand Colors
+
+<Steps>
+  <Step title="Open Tailwind Configuration">
+    Navigate to `tailwind.config.js` in the project root:
+    
+    ```javascript tailwind.config.js
+    export default {
+      theme: {
+        extend: {
+          colors: {
+            'institucional-dorado': '#c29b47',
+            'institucional-claro': '#fdfaf5',
+          }
+        },
+      },
+    }
+    ```
+  </Step>
+  
+  <Step title="Update Color Values">
+    Replace the hex color codes with your brand colors:
+    
+    ```javascript tailwind.config.js
+    colors: {
+      'institucional-dorado': '#YOUR_PRIMARY_COLOR',
+      'institucional-claro': '#YOUR_BACKGROUND_COLOR',
+    }
+    ```
+  </Step>
+  
+  <Step title="Update Additional Colors in App.jsx">
+    Some colors are defined as arbitrary values in the component. Search for:
+    - `bg-[#0b132b]` - Dark navy background
+    - `bg-[#d4af37]` - Accent gold
+    - `bg-[#a3823a]` - Hover state gold
+    - `text-[#d4af37]` - Text accent
+    
+    Replace these with your colors or add them to `tailwind.config.js`.
+  </Step>
+  
+  <Step title="Test Your Changes">
+    Run the development server to see your changes:
+    
+    ```bash
+    npm run dev
+    ```
+    
+    The page will automatically reload with your new colors.
+  </Step>
+</Steps>
+
+<Tip>
+  To add new custom colors, follow the same pattern in `tailwind.config.js` and use them with `bg-your-color-name` or `text-your-color-name`.
+</Tip>
+
+## Updating Text Content
+
+<Tabs>
+  <Tab title="Header Text">
+    ### Change Site Title
+    
+    In `src/App.jsx`, find the header section:
+    
+    ```jsx src/App.jsx
+    <h1 className="text-2xl sm:text-3xl font-bold text-institucional-dorado tracking-wide">
+      ESBO
+    </h1>
+    ```
+    
+    Replace `ESBO` with your organization name.
+    
+    ### Change Button Text
+    
+    ```jsx src/App.jsx
+    <button className="bg-institucional-dorado text-white px-4 sm:px-6 py-2 rounded-sm font-semibold hover:bg-[#a3823a] transition-colors shadow-sm text-xs sm:text-sm">
+      Acceso Estudiantes / Staff
+    </button>
+    ```
+    
+    Update the button text to match your call-to-action.
+  </Tab>
+  
+  <Tab title="Hero Text">
+    ### Update Hero Headings
+    
+    ```jsx src/App.jsx
+    <h2 className="text-white text-3xl md:text-4xl font-bold tracking-widest mb-2 drop-shadow-md">
+      SINTEGRA:
+    </h2>
+    <h3 className="text-white text-4xl md:text-5xl font-serif mb-10 drop-shadow-md">
+      Salud Mental y Formación de Excelencia
+    </h3>
+    ```
+    
+    Replace these with your tagline or mission statement.
+    
+    ### Update Hero Buttons
+    
+    ```jsx src/App.jsx
+    <button className="bg-institucional-dorado text-white px-8 py-3 rounded font-bold hover:bg-[#a3823a] transition-colors shadow-lg text-lg">
+      Agenda tu Cita
+    </button>
+    <button className="bg-white text-institucional-dorado px-8 py-3 rounded font-bold hover:bg-gray-100 transition-colors shadow-lg text-lg">
+      Ver Diplomados y Cursos
+    </button>
+    ```
+  </Tab>
+  
+  <Tab title="Feature Text">
+    ### Update Feature Labels
+    
+    In the icon features section:
+    
+    ```jsx src/App.jsx
+    <p className="font-bold text-gray-800 text-lg">
+      Repositorio Académico
+    </p>
+    ```
+    
+    Change each of the three feature labels:
+    1. Repositorio Académico
+    2. Convenios Internacionales  
+    3. Validación de Certificados
+  </Tab>
+  
+  <Tab title="Contact Info">
+    ### Update Contact Details
+    
+    ```jsx src/App.jsx
+    <a href="mailto:escuelasistemicadebolivia@gmail.com" 
+       className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+      escuelasistemicadebolivia@gmail.com
+    </a>
+    
+    <a href="tel:+59172160914" 
+       className="hover:text-[#d4af37] transition-colors text-sm sm:text-base">
+      +591 72160914
+    </a>
+    ```
+    
+    Replace email addresses and phone number with your contact information.
+    
+    <Warning>
+      Make sure to update both the display text AND the `href` attribute for links to work correctly.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Changing Images
+
+<Steps>
+  <Step title="Replace Logo">
+    Add your logo file to `src/assets/` and update the import:
+    
+    ```jsx src/App.jsx
+    import logo from './assets/your-logo.jpg';
+    ```
+    
+    Supported formats: JPG, PNG, SVG, WebP
+  </Step>
+  
+  <Step title="Update Hero Background Images">
+    Replace the Unsplash URLs with your own images:
+    
+    ```jsx src/App.jsx
+    <div className="w-1/2 h-full bg-cover bg-center" 
+         style={{ backgroundImage: "url('YOUR_IMAGE_URL')" }}>
+    </div>
+    ```
+    
+    You can use:
+    - External URLs (Unsplash, CDN, etc.)
+    - Local images in `src/assets/` (imported like the logo)
+    - Image optimization services
+  </Step>
+  
+  <Step title="Update Favicon">
+    Replace `public/vite.svg` with your favicon and update `index.html`:
+    
+    ```html index.html
+    <link rel="icon" type="image/svg+xml" href="/your-favicon.svg" />
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  For best performance, optimize images before adding them. Recommended sizes:
+  - Logo: 200x200px or smaller
+  - Hero images: 1920x1080px
+  - Favicon: 32x32px or 64x64px
+</Note>
+
+## Updating Social Media Links
+
+<Steps>
+  <Step title="Locate Social Links Section">
+    Find the social media section in `src/App.jsx` (around line 97-121):
+    
+    ```jsx src/App.jsx
+    <div className="flex flex-col gap-5">
+      <h4 className="text-[#d4af37] font-bold text-xl mb-2 tracking-wide">
+        REDES SOCIALES
+      </h4>
+      {/* Links here */}
+    </div>
+    ```
+  </Step>
+  
+  <Step title="Update Facebook Links">
+    ```jsx src/App.jsx
+    <a href="https://www.facebook.com/YOUR_PAGE" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       className="hover:text-[#d4af37] transition-colors">
+      Your Page Name
+    </a>
+    ```
+  </Step>
+  
+  <Step title="Update Instagram Link">
+    ```jsx src/App.jsx
+    <a href="https://www.instagram.com/YOUR_HANDLE" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       className="hover:text-[#d4af37] transition-colors">
+      @your_handle
+    </a>
+    ```
+  </Step>
+  
+  <Step title="Add More Social Networks (Optional)">
+    Import additional icons and add new links:
+    
+    ```jsx src/App.jsx
+    import { Facebook, Instagram, Twitter, Linkedin, Youtube } from 'lucide-react';
+    
+    <div className="flex items-center gap-4">
+      <Twitter className="text-white shrink-0" size={22} />
+      <a href="https://twitter.com/YOUR_HANDLE" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         className="hover:text-[#d4af37] transition-colors">
+        @your_handle
+      </a>
+    </div>
+    ```
+  </Step>
+</Steps>
+
+<Tip>
+  Browse all available Lucide icons at [lucide.dev](https://lucide.dev) to find icons for other social networks.
+</Tip>
+
+## Modifying Sections
+
+### Rearrange Sections
+
+Sections in `App.jsx` are ordered as:
+
+1. Header (line 11-22)
+2. Hero (line 25-39)
+3. Icon Features (line 42-65)
+4. Contact (line 68-124)
+5. Footer (line 127-135)
+6. Floating Chat Button (line 138-140)
+
+To rearrange, simply cut and paste the entire `<section>` or `<header>` block to a new position.
+
+### Add a New Section
+
+<Steps>
+  <Step title="Choose Section Location">
+    Decide where your new section should appear in the page flow.
+  </Step>
+  
+  <Step title="Create Section Element">
+    Add a new `<section>` element:
+    
+    ```jsx src/App.jsx
+    <section className="bg-white py-16 px-8">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-institucional-dorado mb-8">
+          Your Section Title
+        </h2>
+        {/* Your content here */}
+      </div>
+    </section>
+    ```
+  </Step>
+  
+  <Step title="Add Content">
+    Use existing patterns from other sections:
+    - Flexbox layouts for columns
+    - Icons from Lucide React
+    - Consistent spacing and colors
+    - Responsive classes
+  </Step>
+</Steps>
+
+### Remove a Section
+
+Simply delete the entire `<section>` block you want to remove. Make sure to:
+- Remove any unused icon imports at the top
+- Check that z-index layering still works
+- Test responsive layout
+
+## Customizing Icons
+
+<Steps>
+  <Step title="Browse Available Icons">
+    Visit [lucide.dev](https://lucide.dev) to browse thousands of icons.
+  </Step>
+  
+  <Step title="Import Icon">
+    Add the icon name to your imports:
+    
+    ```jsx src/App.jsx
+    import { BookOpen, Globe, Award, Heart } from 'lucide-react';
+    ```
+  </Step>
+  
+  <Step title="Use Icon in Component">
+    ```jsx src/App.jsx
+    <div className="text-institucional-dorado mb-4">
+      <Heart size={50} strokeWidth={1.5} />
+    </div>
+    ```
+    
+    Customize with props:
+    - `size`: Icon size in pixels
+    - `strokeWidth`: Line thickness (1-3)
+    - `color`: Override color (not recommended, use Tailwind classes)
+  </Step>
+  
+  <Step title="Style with Tailwind">
+    Icons inherit color from parent element:
+    
+    ```jsx
+    <div className="text-institucional-dorado">  {/* Gold icon */}
+      <Heart size={50} />
+    </div>
+    
+    <div className="text-white">  {/* White icon */}
+      <Heart size={50} />
+    </div>
+    ```
+  </Step>
+</Steps>
+
+## Button Customization
+
+<Tabs>
+  <Tab title="Button Styles">
+    ### Primary Button
+    
+    ```jsx
+    <button className="
+      bg-institucional-dorado
+      text-white
+      px-8 py-3
+      rounded
+      font-bold
+      hover:bg-[#a3823a]
+      transition-colors
+      shadow-lg
+      text-lg
+    ">
+      Your Text
+    </button>
+    ```
+  </Tab>
+  
+  <Tab title="Secondary Button">
+    ```jsx
+    <button className="
+      bg-white
+      text-institucional-dorado
+      px-8 py-3
+      rounded
+      font-bold
+      hover:bg-gray-100
+      transition-colors
+      shadow-lg
+      text-lg
+    ">
+      Your Text
+    </button>
+    ```
+  </Tab>
+  
+  <Tab title="Small Button">
+    ```jsx
+    <button className="
+      bg-institucional-dorado
+      text-white
+      px-4 sm:px-6
+      py-2
+      rounded-sm
+      font-semibold
+      hover:bg-[#a3823a]
+      transition-colors
+      shadow-sm
+      text-xs sm:text-sm
+    ">
+      Your Text
+    </button>
+    ```
+  </Tab>
+  
+  <Tab title="Add Links">
+    To make buttons functional, wrap them in links or add onClick:
+    
+    ```jsx
+    {/* External link */}
+    <a href="https://example.com" target="_blank" rel="noopener noreferrer">
+      <button className="...">
+        Visit Website
+      </button>
+    </a>
+    
+    {/* Internal link */}
+    <a href="#contact">
+      <button className="...">
+        Contact Us
+      </button>
+    </a>
+    
+    {/* JavaScript action */}
+    <button 
+      onClick={() => alert('Clicked!')} 
+      className="...">
+      Click Me
+    </button>
+    ```
+  </Tab>
+</Tabs>
+
+## Making the Chat Button Functional
+
+The floating chat button is currently decorative. To make it functional:
+
+<Steps>
+  <Step title="Add onClick Handler">
+    ```jsx src/App.jsx
+    <div 
+      onClick={() => window.open('https://wa.me/59172160914', '_blank')}
+      className="fixed bottom-6 right-6 bg-[#d4af37] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:bg-yellow-500 transition-colors z-50 border-2 border-white">
+      <MessageCircle size={28} />
+    </div>
+    ```
+    
+    This opens WhatsApp with your phone number.
+  </Step>
+  
+  <Step title="Alternative: Open Chat Widget">
+    If using a chat service like Intercom, Crisp, or Tawk.to:
+    
+    ```jsx
+    <div 
+      onClick={() => {
+        if (window.Intercom) {
+          window.Intercom('show');
+        }
+      }}
+      className="...">
+      <MessageCircle size={28} />
+    </div>
+    ```
+  </Step>
+  
+  <Step title="Alternative: Scroll to Contact">
+    ```jsx
+    <div 
+      onClick={() => {
+        document.getElementById('contact').scrollIntoView({ 
+          behavior: 'smooth' 
+        });
+      }}
+      className="...">
+      <MessageCircle size={28} />
+    </div>
+    ```
+    
+    Don't forget to add `id="contact"` to your contact section.
+  </Step>
+</Steps>
+
+## Responsive Design Tips
+
+<AccordionGroup>
+  <Accordion title="Mobile-First Approach">
+    Start with mobile styles, then add larger breakpoints:
+    
+    ```jsx
+    {/* Base styles for mobile */}
+    <div className="text-sm px-4 flex-col">
+      {/* Content */}
+    </div>
+    
+    {/* Add tablet styles */}
+    <div className="text-sm sm:text-base px-4 sm:px-8 flex-col sm:flex-row">
+      {/* Content */}
+    </div>
+    ```
+  </Accordion>
+  
+  <Accordion title="Hide Elements on Mobile">
+    Use responsive display utilities:
+    
+    ```jsx
+    {/* Hidden on mobile, visible on desktop */}
+    <div className="hidden md:block">
+      Desktop only content
+    </div>
+    
+    {/* Visible on mobile, hidden on desktop */}
+    <div className="block md:hidden">
+      Mobile only content
+    </div>
+    ```
+  </Accordion>
+  
+  <Accordion title="Responsive Text Sizes">
+    ```jsx
+    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+      Scales across all screen sizes
+    </h1>
+    ```
+  </Accordion>
+  
+  <Accordion title="Responsive Spacing">
+    ```jsx
+    <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-8 md:px-12">
+      {/* Content with responsive padding */}
+    </section>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Testing Your Changes
+
+<Steps>
+  <Step title="Development Server">
+    Run the dev server to see changes in real-time:
+    
+    ```bash
+    npm run dev
+    ```
+    
+    Open `http://localhost:5173` in your browser.
+  </Step>
+  
+  <Step title="Test Responsive Design">
+    - Open browser DevTools (F12)
+    - Click device toolbar icon
+    - Test on various screen sizes
+    - Check mobile, tablet, and desktop views
+  </Step>
+  
+  <Step title="Build for Production">
+    When ready to deploy:
+    
+    ```bash
+    npm run build
+    ```
+    
+    This creates optimized files in the `dist/` folder.
+  </Step>
+  
+  <Step title="Preview Production Build">
+    Test the production build locally:
+    
+    ```bash
+    npm run preview
+    ```
+  </Step>
+</Steps>
+
+## Common Customization Recipes
+
+<CardGroup cols={2}>
+  <Card title="Change Page Title" icon="heading">
+    Edit `index.html`:
+    ```html
+    <title>Your Site Name</title>
+    ```
+  </Card>
+  
+  <Card title="Add Google Fonts" icon="font">
+    Add to `index.html` `<head>`:
+    ```html
+    <link href="https://fonts.googleapis.com/css2?family=Your+Font" rel="stylesheet">
+    ```
+    Then use in `tailwind.config.js`
+  </Card>
+  
+  <Card title="Add Analytics" icon="chart-line">
+    Add tracking code to `index.html` before `</head>`
+  </Card>
+  
+  <Card title="Enable Dark Mode" icon="moon">
+    Add `darkMode: 'class'` to `tailwind.config.js` and use `dark:` prefix
+  </Card>
+</CardGroup>
+
+## Getting Help
+
+<Note>
+  - **Tailwind CSS Docs**: [tailwindcss.com/docs](https://tailwindcss.com/docs)
+  - **React Docs**: [react.dev](https://react.dev)
+  - **Lucide Icons**: [lucide.dev](https://lucide.dev)
+  - **Vite Docs**: [vitejs.dev](https://vitejs.dev)
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Project Structure" icon="folder-tree" href="/development/project-structure">
+    Understand the codebase organization
+  </Card>
+  
+  <Card title="Components" icon="puzzle-piece" href="/development/components">
+    Deep dive into React components
+  </Card>
+</CardGroup>
